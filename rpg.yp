@@ -1,0 +1,226 @@
+
+import random
+Player={}
+PNum=0
+pid=0
+number_of_skeletons=0
+head={
+    0:'No Item',
+    1:'Copper Platehelm'
+}
+neck={
+    0:'No Item'
+}
+
+chest={
+    0:'No Item',
+    'mail':{
+        1:'Chainmail'
+    }
+}
+
+cape={
+    0:'No Item'
+}
+
+legs={
+    0:'No Item',
+    1:'Chain Leggings'
+}
+
+boots={
+    0:'No Item',
+    1:'boots'
+}
+
+trinket={
+    0:'No Item'
+}
+
+oneHand={
+    0:'No Item',
+    1:'Shortsword'
+}
+
+twoHand={
+    0:'No Item',
+    1:'Staff'
+}
+
+offHand={
+    0:'No Item',
+    1:'Shield'
+}
+
+LvlChart={# Current level : xp needed for next level
+    1:300,
+    2:600,
+    3:900,
+    4:3800,
+    5:7500,
+    6:9000,
+    7:11000,
+    8:14000,
+    9:16000,
+    10:17000,
+    11:18000,
+    12:19000,
+    13:20000,
+    14:25000,
+    15:30000,
+    16:35000,
+    17:40000,
+    18:45000,
+    19:50000,
+    20:0 #current max level
+    }
+maxlvl=int(len(LvlChart))
+
+def getanitem():
+    print("Hello brave adventurer ",Player[PNum]["Name"],".",sep="")
+    responce = input("would you like an item? ")
+    slot = 'Chest'
+    item = "Brestplate +3"
+    if responce == "yes":
+
+        Player[PNum][slot]=item
+        print('You have aquired ',Player[PNum][slot],".",sep="")
+    else:
+        print('You have decided to keep your ',Player[PNum][slot],".",sep="")
+    responce = None
+
+def lookup(name):
+    found = 0
+    for i in Player:
+        if (name.upper() == Player[i]["Name"].upper()):
+            for j,k in Player[i].items():
+                print(j,'---', k)
+            print('PlayerID: ',i)
+            found = 1
+            break
+    if found == 0: 
+        print('No player matched this name!')
+
+def newplayer():
+    global pid
+    global PNum
+    username=Pick_Name()
+    Player[pid] = {
+        "Name":username,
+        "Level":1,
+        "xp":0,
+        "NxtLvl":LvlChart[1],
+        "Head":head[0],
+        "Neck":neck[0],
+        "Chest":chest['mail'][1],
+        "Cape":cape[0],
+        "Legs":legs[1],
+        "Boots":boots[1],
+        "Trinket":trinket[0],
+        "Mainhand":oneHand[1],
+        "Offhand":offHand[1]
+        }
+    PNum = pid
+    pid +=1
+    
+def Pick_Name():
+    username=input('Enter a name: ')
+    loop = 1
+    name_match = 0
+    while loop:
+        for i in Player:
+            if (username.upper() == Player[i]["Name"].upper()):
+                print('Name already in use.')
+                username=input('Please enter a name: ')
+                name_match = 1
+            else:
+                pass
+        if (name_match == 1):
+            name_match = 0
+        else:break
+    return username
+
+def Levelup(p):
+    if (Player[p]['Level'] != LvlChart[maxlvl]):
+        while (Player[p]["xp"] >= Player[p]["NxtLvl"]):
+            Player[p]["NxtLvl"] = LvlChart[Player[p]["Level"]]
+            if Player[p]['Level'] == (maxlvl-1):
+                Player[p]["xp"] = 'MAX'
+                Player[p]["Level"] +=1
+                print(Player[p]["Name"],"has reached the max level of",Player[p]["Level"])
+                break
+            elif Player[p]['Level'] == maxlvl:
+                break
+            else:
+                Player[p]["Level"] +=1
+                Player[p]["xp"] = Player[p]["xp"] - Player[p]["NxtLvl"]
+                print(Player[p]["Name"],"has reached the level",Player[p]["Level"])
+                print('EXP untill next Level',Player[p]["NxtLvl"])
+
+def exp(xp,PlayerID):
+    if type(Player[PlayerID]["xp"]) == int:
+        Player[PlayerID]["xp"]+= xp
+    else:
+        print('You have reached the highest possiable level.')
+    Levelup(PlayerID)
+
+
+
+
+
+newplayer()
+
+
+
+
+
+while True:
+    print()
+    print('1: Get an item.')
+    print('2: Gain Xp.')
+    print('3: Create new player.')
+    print('4: Name Lookup.')
+    print('5: Switch PlayerID.')
+    print('6: PlayerID.')
+    print('7: Raise a Skeleton.')
+    print('8: Close.')
+    print()
+
+
+    scene_pick=int(input('Choose a scenario: '))
+    if (scene_pick == 1):
+        print()
+        getanitem()
+        print()
+    elif (scene_pick == 2):
+        print()
+        xp=int(input('Enter an xp amount: '))
+        print(Player[PNum]["Name"],"has gained ",xp,"xp")
+        exp(xp,PNum)
+        print()
+        print('EXP:',Player[PNum]["xp"])
+        print()
+    elif (scene_pick == 3):
+        print()
+        newplayer()
+        print()
+    elif (scene_pick == 4):
+        print()
+        lookup(input('enter a name: '))
+        print()
+    elif (scene_pick == 5):
+        print()
+        PNum=int(input('Enter new Player ID: '))
+        print()
+    elif (scene_pick == 6):
+        print()
+        print(PNum)
+        print(Player[PNum]['Name'])
+        print()
+    elif(scene_pick == 7):
+        raiseundead = random.randint(1,4)
+        number_of_skeletons +=raiseundead
+        print(Player[PNum]['Name'],' now has ',number_of_skeletons,' Skeleton Minions.',sep='')
+    else:
+        print()
+        break
